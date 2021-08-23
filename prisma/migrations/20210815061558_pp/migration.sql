@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `user` MODIFY `profile` LONGBLOB NULL DEFAULT NULL;

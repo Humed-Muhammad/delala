@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model admin {
+  id       String @id
+  username String @unique
+  email    String
+  phone    BigInt
+}
+
+model home {
+  id           String   @id
+  providerId   String
+  name         String
+  addressOne   String
+  addressTwo   String
+  district     Int
+  photo        Bytes
+  price        BigInt
+  roomNumber   Int
+  roomSize     BigInt
+  homeType     String
+  homeCapacity String
+  detailDesc   String   @db.LongText
+  shortDesc    String   @db.VarChar(200)
+  status       Int      @default(1) @db.TinyInt
+  provider     provider @relation(fields: [providerId], references: [id])
+  createdAt    DateTime @default(now()) @db.Date
+  cart         cart[]
+
+  @@index([providerId], name: "providerId")
+}
+
+model provider {
+  id           String   @id
+  firstName    String
+  lastName     String
+  email        String
+  country      String
+  phone        BigInt
+  profile      Bytes
+  homePosted   BigInt   @default(0)
+  RegisteredAt DateTime @default(now()) @db.Date
+  home         home[]
+}
+
+model user {
+  id           String   @id
+  firstName    String
+  lastName     String
+  email        String   @unique
+  password     String
+  country      String
+  phone        Int
+  Profile      Bytes    @default(dbgenerated()) @db.LongBlob
+  RegisteredAt DateTime @default(now()) @db.Date
+  cart         cart[]
+}
+
+model cart {
+  id        String   @id
+  user      user?    @relation(fields: [userId], references: [id])
+  userId    String
+  home      home?    @relation(fields: [homeId], references: [id])
+  homeId    String
+  createdAt DateTime @default(now()) @db.Date
+}
